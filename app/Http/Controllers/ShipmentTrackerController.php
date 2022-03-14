@@ -9,6 +9,9 @@ use Illuminate\Pagination\Paginator;
 
 use App\Http\Requests\ShipmentTracker\IndexRequest;
 
+// event
+use App\Events\ShipmentStatusProcess;
+
 class ShipmentTrackerController extends Controller
 {
     
@@ -29,6 +32,10 @@ class ShipmentTrackerController extends Controller
         }
 
         $order->fresh();
+
+        if ($request->status == 'Shipping') {
+            event(new ShipmentStatusProcess($order));
+        }
 
         return $this->generateResponse('Shipment status updated.', 200, $order);
     }
